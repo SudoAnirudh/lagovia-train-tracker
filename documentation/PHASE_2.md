@@ -19,7 +19,7 @@ Phase 2 implements the pure domain logic in `backend/app/domain.py`. This module
 
 ---
 
-## 2. Core Functions & Data Models ([backend/app/domain.py](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/backend/app/domain.py))
+## 2. Core Functions & Data Models ([backend/app/domain.py](../backend/app/domain.py))
 
 ```python
 @dataclass(frozen=True)
@@ -57,7 +57,7 @@ class StationResult:
 
 ## 3. Unit Test Verification
 
-The test suite in [backend/tests/test_domain.py](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/backend/tests/test_domain.py) exercises boundary filtering and contract shaping:
+The test suite in [backend/tests/test_domain.py](../backend/tests/test_domain.py) exercises boundary filtering and contract shaping:
 
 ```bash
 $ venv/bin/pytest backend/tests/test_domain.py -v

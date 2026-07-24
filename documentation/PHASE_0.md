@@ -57,7 +57,7 @@ Phase 0 establishes the foundation and developer tooling for the **Lagovia Train
 
 The backend is built with **Python 3.14** and **FastAPI**, chosen for fast async execution and built-in OpenAPI schema generation.
 
-- **[backend/app/main.py](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/backend/app/main.py)**:
+- **[backend/app/main.py](../backend/app/main.py)**:
   Defines the root FastAPI application instance and the `/health` GET route.
   ```python
   from fastapi import FastAPI
@@ -73,7 +73,7 @@ The backend is built with **Python 3.14** and **FastAPI**, chosen for fast async
       return {"status": "ok"}
   ```
 
-- **[backend/tests/test_health.py](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/backend/tests/test_health.py)**:
+- **[backend/tests/test_health.py](../backend/tests/test_health.py)**:
   Uses `pytest` and `httpx.AsyncClient` with `ASGITransport` to execute tests directly against the FastAPI app in-memory without opening actual network ports.
   ```python
   import pytest
@@ -90,7 +90,7 @@ The backend is built with **Python 3.14** and **FastAPI**, chosen for fast async
           assert response.json() == {"status": "ok"}
   ```
 
-- **Dependencies ([requirements.txt](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/backend/requirements.txt))**:
+- **Dependencies ([requirements.txt](../backend/requirements.txt))**:
   - `fastapi` & `uvicorn[standard]` — Async REST framework & ASGI server.
   - `httpx` — Non-blocking HTTP client for upstream iRail calls.
   - `pydantic` — Strict request/response data validation.
@@ -102,16 +102,16 @@ The backend is built with **Python 3.14** and **FastAPI**, chosen for fast async
 
 The frontend is built using **React 18**, **TypeScript**, and **Vite**.
 
-- **Vite Configuration ([vite.config.ts](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/frontend/vite.config.ts))**:
+- **Vite Configuration ([vite.config.ts](../frontend/vite.config.ts))**:
   Includes development proxies for `/departures` and `/health` routing requests to `http://127.0.0.1:8000` during local development, preventing CORS issues.
-- **TypeScript Configuration ([tsconfig.json](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/frontend/tsconfig.json))**:
+- **TypeScript Configuration ([tsconfig.json](../frontend/tsconfig.json))**:
   Enforces strict type safety (`strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`).
-- **Placeholder UI ([App.tsx](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/frontend/src/App.tsx))**:
+- **Placeholder UI ([App.tsx](../frontend/src/App.tsx))**:
   Provides an initial clean placeholder showcasing the app title, description, and status box.
 
 ---
 
-### 3.3 CI-Lite Automation ([Makefile](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/Makefile))
+### 3.3 CI-Lite Automation ([Makefile](../Makefile))
 
 A root `Makefile` standardizes local execution across developers:
 
@@ -147,7 +147,7 @@ $ make check
 cd backend && venv/bin/pytest
 ============================= test session starts ==============================
 platform linux -- Python 3.14.3, pytest-8.4.2, pluggy-1.6.0
-rootdir: /home/anirudhs/Documents/Boredom/DPS_CHALLENGE/backend
+rootdir: ./backend
 plugins: respx-0.23.1, asyncio-0.26.0, anyio-4.14.2
 asyncio: mode=Mode.STRICT
 collected 1 item

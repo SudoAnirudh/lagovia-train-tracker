@@ -22,7 +22,7 @@ Phase 1 implements the pure, isolated iRail API integration module in `backend/a
 
 ## 2. Component Structure
 
-### Data Models & Exceptions ([backend/app/irail_client.py](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/backend/app/irail_client.py))
+### Data Models & Exceptions ([backend/app/irail_client.py](../backend/app/irail_client.py))
 
 ```python
 from dataclasses import dataclass
@@ -66,7 +66,7 @@ class RawDeparture:
 
 ## 3. Unit Test Verification
 
-The test suite in [backend/tests/test_irail_client.py](file:///home/anirudhs/Documents/Boredom/DPS_CHALLENGE/backend/tests/test_irail_client.py) verifies all success, caching, and error edge cases without external network requests:
+The test suite in [backend/tests/test_irail_client.py](../backend/tests/test_irail_client.py) verifies all success, caching, and error edge cases without external network requests:
 
 ```bash
 $ venv/bin/pytest backend/tests/test_irail_client.py -v
