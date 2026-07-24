@@ -82,3 +82,24 @@ This file tracks the usage of AI coding assistance during the implementation of 
 
 ### Rejected
 - Returning an empty 200 list on queries shorter than 3 characters — PRD §5 FR2 strictly mandates HTTP 400 `query_too_short`.
+
+---
+
+## Log Entry: 2026-07-24 - Phase 4 Implementation
+
+### Prompt / Intent
+"Implement Phase 4 of `IMPLEMENTATION_PLAN.md`: React + TypeScript frontend dashboard, search form with explicit submit button and instant 3-character validation, loading state, empty state, global error state, per-station error cards, and visually distinct delay/cancelled status badges."
+
+### Kept
+- Typed API client in `frontend/src/api.ts` handling `GET /departures` and structured 400 errors.
+- `SearchForm` component with instant client-side 3-character query validation and explicit submit button.
+- `StationCard` component rendering per-station results, empty states, and isolated error banners (`status: "error"`).
+- `DepartureRow` component showing scheduled time in local time, green `"On time"` badge for `delay_minutes === 0`, amber `"+X min"` badge for delays, and bold red `"CANCELLED"` badge with strikethrough styling for cancelled trains.
+- `App.tsx` main component handling loading, global error, empty result, and success states.
+- Clean design system in `frontend/src/index.css`.
+
+### Rewritten / Adjusted
+- Used explicit submit button trigger rather than keystroke debouncing for clearer user feedback and lower iRail request load.
+
+### Rejected
+- WebSocket or interval polling for live updates — out of scope per PRD §4.

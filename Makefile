@@ -9,7 +9,7 @@ check-frontend:
 	cd frontend && npm run lint && npm run build
 
 dev-backend:
-	cd backend && venv/bin/uvicorn app.main:app --reload --port 8000
+	cd backend && venv/bin/uvicorn app.main:app --reload --port 8002
 
 dev-frontend:
 	cd frontend && npm run dev

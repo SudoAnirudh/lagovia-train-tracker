@@ -19,6 +19,7 @@ Built on top of the iRail API (Belgium).
 - [Phase 1 Documentation — iRail Client (Isolated & Tested)](documentation/PHASE_1.md)
 - [Phase 2 Documentation — Core Domain Logic](documentation/PHASE_2.md)
 - [Phase 3 Documentation — `GET /departures` Endpoint](documentation/PHASE_3.md)
+- [Phase 4 Documentation — Frontend UI Implementation](documentation/PHASE_4.md)
 
 ---
 
@@ -69,3 +70,4 @@ make check
 2. **In-Process Caching (Phase 1)**: Station lists change infrequently, so in-process caching is used to avoid refetching iRail's full `/stations` endpoint on every query.
 3. **UTC Time Window Handling (Phase 2)**: 15-minute window calculations are enforced server-side in UTC to prevent client-side timezone drift.
 4. **Per-Station Error Isolation (Phase 3)**: Concurrent fan-out via `asyncio.gather(*tasks, return_exceptions=True)` isolates upstream station failures so partial results succeed with HTTP 200 OK.
+5. **Explicit Submit Trigger (Phase 4)**: Used explicit submit button trigger over keystroke debouncing for clearer UX and lower upstream API load.
