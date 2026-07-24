@@ -1,145 +1,88 @@
-# AI Usage Log
+# AI Usage Report
 
-This file tracks the usage of AI coding assistance during the implementation of the Lagovia Train Tracker project, as required by repo guidelines (`RULES.md` §17).
-
----
-
-## Log Entry: 2026-07-24 - Phase 0 Implementation
-
-### Prompt / Intent
-"Implement Phase 0 of `IMPLEMENTATION_PLAN.md`: set up repo structure, FastAPI `/health` endpoint, React + Vite TS app, local CI-lite check tooling, and initial documentation."
-
-### Kept
-- Backend directory structure (`backend/app`, `backend/tests`).
-- FastAPI `app/main.py` with `/health` returning `{"status": "ok"}`.
-- Pytest test in `backend/tests/test_health.py`.
-- Vite + React + TypeScript configuration in `frontend/`.
-- Root `Makefile` for local `make check` running backend unit tests and frontend typechecks.
-- Initial `README.md` and `AI_USAGE.md`.
-
-### Rewritten / Adjusted
-- Standardized FastAPI endpoint structure to follow Pydantic / ASGI testing best practices with `httpx.AsyncClient` and `ASGITransport`.
-
-### Rejected
-- Full CI workflow setup (GitHub Actions) for Phase 0 (rejected in favor of local `Makefile` / `make check` per PRD and implementation plan scope).
+This document records the usage of AI coding assistance during the implementation of the **Lagovia Train Tracker** project, as required by repository guidelines (`RULES.md` §17).
 
 ---
 
-## Log Entry: 2026-07-24 - Phase 1 Implementation
+## 1. Overview & AI Tools Used
 
-### Prompt / Intent
-"Implement Phase 1 of `IMPLEMENTATION_PLAN.md`: create pure `irail_client.py` module for iRail API fetch and parse, zero FastAPI dependencies, typed custom exceptions, in-process station caching, and unit tests using `respx` mock fixtures."
-
-### Kept
-- `backend/app/irail_client.py` with zero FastAPI imports.
-- Typed dataclasses `Station` and `RawDeparture`.
-- Typed custom exception hierarchy (`IRailError`, `IRailTimeoutError`, `IRailAPIError`, `IRailParseError`).
-- In-process stations list caching (`fetch_stations`, `search_stations`, `clear_stations_cache`).
-- Fixtures `stations.json`, `liveboard_brussels.json`, and `liveboard_empty.json` in `backend/tests/fixtures/`.
-- 8 unit tests in `backend/tests/test_irail_client.py`.
-
-### Rewritten / Adjusted
-- Vehicle shortname parsing logic to fallback gracefully to stripping `BE.NMBS.` prefix if `vehicleinfo.shortname` is absent in raw liveboard item.
-
-### Rejected
-- Adding an external cache library (e.g. Redis/diskcache) — in-process list caching is simple, dependency-free, and sufficient.
+| Tool / Model | Primary Usage Area | Scope of Execution |
+|--------------|--------------------|--------------------|
+| **Google Antigravity AI Agentic IDE** (Gemini 2.5 Pro) | End-to-End Implementation | Code scaffolding, TDD unit/integration tests, UTC boundary logic, live iRail API smoke testing, glassmorphic UI design, and phase documentation. |
 
 ---
 
-## Log Entry: 2026-07-24 - Phase 2 Implementation
+## 2. Conversation Transcripts & Representative Prompts
 
-### Prompt / Intent
-"Implement Phase 2 of `IMPLEMENTATION_PLAN.md`: pure domain logic in `domain.py`, zero FastAPI dependencies, UTC ISO 8601 formatting, strict 15-minute window boundary filtering, response contract shaping matching PRD §7, and comprehensive boundary unit tests."
+- **Local Session Logs**: Complete untruncated conversation transcripts are saved locally in JSON Lines format:
+  `brain/65779b61-61f1-4335-a751-72e9e001c349/.system_generated/logs/transcript.jsonl`
+- **Conversation ID**: `65779b61-61f1-4335-a751-72e9e001c349`
 
-### Kept
-- Pure module `backend/app/domain.py` with zero FastAPI imports.
-- Dataclasses `Departure`, `StationResult`, `DeparturesResponse`.
-- Functions `format_iso8601_utc`, `filter_window`, `to_departure`, `to_station_result_ok`, `to_station_result_error`, `build_response_dict`.
-- Strict boundary unit tests in `backend/tests/test_domain.py` testing exact boundaries: `now - 1s` (excluded), `now` (included), `now + 15m` (included), `now + 15m + 1s` (excluded).
-
-### Rewritten / Adjusted
-- Delay calculation converted delay in seconds to non-negative integer minutes using floor division `delay // 60` capped at 0 minimum.
-
-### Rejected
-- Client-side or naive timezone handling in datetime parsing — all timestamps are parsed and formatted explicitly as UTC with trailing `'Z'`.
+### Representative Prompt Sequence
+1. **Phase 0**: *"Set up project skeleton: FastAPI backend with `/health` endpoint, Vite React TS app, root `Makefile` for `make check`."*
+2. **Phase 1**: *"Implement `irail_client.py` with zero FastAPI imports, custom typed exceptions, station list caching, and `respx` unit tests."*
+3. **Phase 2**: *"Implement pure domain logic in `domain.py` with zero FastAPI imports, strict 15-minute UTC window boundary filtering, and boundary tests."*
+4. **Phase 3**: *"Implement `GET /departures?q=<query>` in `main.py`, 400 `query_too_short` validation, `asyncio.gather(*tasks, return_exceptions=True)` fan-out, per-station error isolation."*
+5. **Phase 4**: *"Implement React 18 + TS UI dashboard with 3-char instant validation, loading/empty/error states, and status badges ('On time', '+X min', 'CANCELLED')."*
+6. **Phase 5**: *"Polish & hardening: execute live iRail API smoke tests, configure `follow_redirects=True` for HTTP 303 redirects, finalize documentation."*
+7. **Phase 6**: *"Additive fuzzy search (`rapidfuzz`): keep substring path primary, trigger fuzzy matching only on 0 substring matches (e.g. 'Antverpen' → 'Antwerpen-Centraal')."*
 
 ---
 
-## Log Entry: 2026-07-24 - Phase 3 Implementation
+## 3. Decision Matrix: Accepted, Rewritten & Rejected
 
-### Prompt / Intent
-"Implement Phase 3 of `IMPLEMENTATION_PLAN.md`: `GET /departures` endpoint in `main.py`, 3-char minimum validation (400 `query_too_short`), async concurrent fan-out via `asyncio.gather(..., return_exceptions=True)`, per-station error isolation, and integration tests with mocked iRail."
-
-### Kept
-- Endpoint `GET /departures?q=<query>` in `backend/app/main.py`.
-- Validation for `len(q) < 3` returning HTTP 400 with `{"error": "query_too_short", "message": "q must be at least 3 characters", "min_length": 3}`.
-- Concurrent fan-out via `asyncio.gather(*tasks, return_exceptions=True)` across matched stations.
-- Per-station error isolation mapping `IRailTimeoutError` to `status: "error"` (`error: "upstream_timeout"`) and other errors to `error: "upstream_error"` while letting remaining stations succeed (HTTP 200).
-- Integration test suite `backend/tests/test_departures_endpoint.py`.
-
-### Rewritten / Adjusted
-- Shared HTTP client management in `main.py` using FastAPI lifespan context manager with fallback inline client for test execution.
-
-### Rejected
-- Returning an empty 200 list on queries shorter than 3 characters — PRD §5 FR2 strictly mandates HTTP 400 `query_too_short`.
+| Phase | Accepted As-Is | Rewritten / Adjusted | Rejected |
+|-------|----------------|----------------------|----------|
+| **Phase 0** | Directory structure, FastAPI `/health` route, Vite TS config, `Makefile` | Standardized ASGI async test harness with `httpx.AsyncClient` | GitHub Actions CI (rejected in favor of local `make check`) |
+| **Phase 1** | Decoupled `irail_client.py`, custom exceptions, station caching | Vehicle shortname parsing fallback when `vehicleinfo` is absent | Redis/diskcache external library (in-process cache is sufficient) |
+| **Phase 2** | `domain.py` data models, 15-min UTC window filter | Delay calculation converted seconds to integer minutes via floor division `delay // 60` | Client-side/local timezone parsing (all timestamps explicitly UTC `'Z'`) |
+| **Phase 3** | `GET /departures`, 400 `query_too_short`, `asyncio.gather(..., return_exceptions=True)` | Lifespan context manager for HTTP client with fallback inline client for tests | Returning empty 200 list on queries < 3 chars (PRD strictly mandates 400) |
+| **Phase 4** | React components (`SearchForm`, `StationCard`, `DepartureRow`), status badges | Explicit submit button trigger rather than input keystroke debouncing | WebSocket / SSE interval polling (out of scope per PRD §4) |
+| **Phase 5** | Live smoke testing against `api.irail.be`, documentation showcase | Added `follow_redirects=True` to handle iRail HTTP 303 redirects | Unverified manual commits without running full `make check` |
+| **Phase 6** | `fuzzy_search_stations_in_list` function using `rapidfuzz` | Set WRatio similarity cutoff score to 70.0 | Modifying/replacing primary substring search path |
 
 ---
 
-## Log Entry: 2026-07-24 - Phase 4 Implementation
+## 4. Detailed Phase Logs
 
-### Prompt / Intent
-"Implement Phase 4 of `IMPLEMENTATION_PLAN.md`: React + TypeScript frontend dashboard, search form with explicit submit button and instant 3-character validation, loading state, empty state, global error state, per-station error cards, and visually distinct delay/cancelled status badges."
+### Log Entry: Phase 0 Implementation
+- **Prompt**: Implement Phase 0 of `IMPLEMENTATION_PLAN.md`: set up repo structure, FastAPI `/health` endpoint, React + Vite TS app, local CI-lite check tooling, and initial documentation.
+- **Kept**: FastAPI `app/main.py` `/health`, pytest `test_health.py`, Vite + React + TypeScript setup, root `Makefile`.
+- **Rewritten**: Standardized FastAPI endpoint structure to follow Pydantic / ASGI testing best practices.
+- **Rejected**: Full CI workflow setup in favor of local `make check`.
 
-### Kept
-- Typed API client in `frontend/src/api.ts` handling `GET /departures` and structured 400 errors.
-- `SearchForm` component with instant client-side 3-character query validation and explicit submit button.
-- `StationCard` component rendering per-station results, empty states, and isolated error banners (`status: "error"`).
-- `DepartureRow` component showing scheduled time in local time, green `"On time"` badge for `delay_minutes === 0`, amber `"+X min"` badge for delays, and bold red `"CANCELLED"` badge with strikethrough styling for cancelled trains.
-- `App.tsx` main component handling loading, global error, empty result, and success states.
-- Clean design system in `frontend/src/index.css`.
+### Log Entry: Phase 1 Implementation
+- **Prompt**: Implement Phase 1 of `IMPLEMENTATION_PLAN.md`: pure `irail_client.py` module for iRail API fetch and parse, zero FastAPI dependencies, typed custom exceptions, in-process station caching, and unit tests using `respx`.
+- **Kept**: `backend/app/irail_client.py` zero FastAPI imports, custom exceptions (`IRailError`, `IRailTimeoutError`, etc.), station caching, unit test fixtures (`stations.json`, `liveboard_brussels.json`).
+- **Rewritten**: Vehicle shortname parsing logic to fallback gracefully to stripping `BE.NMBS.` prefix if `vehicleinfo.shortname` is absent.
+- **Rejected**: Adding external Redis / diskcache library.
 
-### Rewritten / Adjusted
-- Used explicit submit button trigger rather than keystroke debouncing for clearer user feedback and lower iRail request load.
+### Log Entry: Phase 2 Implementation
+- **Prompt**: Implement Phase 2 of `IMPLEMENTATION_PLAN.md`: pure domain logic in `domain.py`, zero FastAPI dependencies, UTC ISO 8601 formatting, strict 15-minute window boundary filtering, response contract shaping, and boundary tests.
+- **Kept**: `backend/app/domain.py`, UTC ISO 8601 formatting, `filter_window()` logic, strict boundary tests (`now - 1s`, `now`, `now + 15m`, `now + 15m + 1s`).
+- **Rewritten**: Delay calculation converted delay in seconds to non-negative integer minutes using floor division `delay // 60`.
+- **Rejected**: Client-side timezone parsing.
 
-### Rejected
-- WebSocket or interval polling for live updates — out of scope per PRD §4.
+### Log Entry: Phase 3 Implementation
+- **Prompt**: Implement Phase 3 of `IMPLEMENTATION_PLAN.md`: `GET /departures` endpoint in `main.py`, 3-char minimum validation (400 `query_too_short`), async concurrent fan-out via `asyncio.gather(..., return_exceptions=True)`, per-station error isolation.
+- **Kept**: Endpoint `GET /departures?q=<query>`, 3-char validation 400 error, `asyncio.gather(*tasks, return_exceptions=True)` fan-out, per-station error isolation.
+- **Rewritten**: Shared HTTP client management in `main.py` using FastAPI lifespan context manager.
+- **Rejected**: Returning an empty 200 list on queries shorter than 3 characters.
 
----
+### Log Entry: Phase 4 Implementation
+- **Prompt**: Implement Phase 4 of `IMPLEMENTATION_PLAN.md`: React + TypeScript frontend dashboard, search form with explicit submit button and instant 3-character validation, loading state, empty state, global error state, per-station error cards, and status badges.
+- **Kept**: Typed API client in `frontend/src/api.ts`, `SearchForm`, `StationCard`, `DepartureRow`, status badges (`On time`, `+X min`, `CANCELLED`).
+- **Rewritten**: Used explicit submit button trigger rather than keystroke debouncing.
+- **Rejected**: WebSocket or interval polling for live updates.
 
-## Log Entry: 2026-07-24 - Phase 5 Implementation
+### Log Entry: Phase 5 Implementation
+- **Prompt**: Implement Phase 5 of `IMPLEMENTATION_PLAN.md`: polish & hardening, finalize README.md, update AI_USAGE.md, execute live iRail API smoke tests, and line-by-line PRD review.
+- **Kept**: Finalized root `README.md`, executed live iRail API smoke tests (714 stations returned, live departures verified), showcase documentation `documentation/PHASE_5.md`.
+- **Rewritten**: Added `follow_redirects=True` on `httpx.AsyncClient` calls after live smoke testing discovered iRail's use of HTTP 303 redirects.
+- **Rejected**: Starting Phase 6 before Phase 0-5 completion approval.
 
-### Prompt / Intent
-"Implement Phase 5 of `IMPLEMENTATION_PLAN.md`: polish & hardening, finalize README.md with run instructions and trade-offs, update AI_USAGE.md across all phases, execute live iRail API smoke tests, and line-by-line PRD review."
-
-### Kept
-- Finalized root `README.md` and component `README.md` files.
-- Executed live iRail API integration smoke tests against real Belgian station data (714 stations returned, live departures verified for Brugge).
-- Configured `follow_redirects=True` in `irail_client.py` and `main.py` to seamlessly follow iRail HTTP 303 redirects.
-- Complete documentation showcase `documentation/PHASE_5.md`.
-
-### Rewritten / Adjusted
-- Added `follow_redirects=True` on `httpx.AsyncClient` calls after live smoke testing discovered iRail's use of HTTP 303 redirects on station endpoints.
-
-### Rejected
-- Starting Phase 6 (fuzzy search) before Phase 0-5 completion approval per explicit user constraint.
-
----
-
-## Log Entry: 2026-07-24 - Phase 6 Implementation
-
-### Prompt / Intent
-"Implement Phase 6 (fuzzy search) from IMPLEMENTATION_PLAN.md: substring matching stays primary path; fuzzy matching (rapidfuzz) only fills in when substring search returns zero stations. Add 'Antverpen' -> 'Antwerpen-Centraal' as a test case. Update TECH_STACK.md with dependency justification per RULES.md rule 6."
-
-### Kept
-- Added `rapidfuzz>=3.0.0` to `backend/requirements.txt`.
-- Documented dependency justification in `docs/TECH_STACK.md`.
-- Implemented `fuzzy_search_stations_in_list` in `backend/app/irail_client.py`.
-- Updated `search_stations` to fall back to `fuzzy_search_stations_in_list` only when substring matches = 0.
-- Unit and integration tests in `backend/tests/test_fuzzy_search.py` verifying `"Antverpen"` typo resolution to `"Antwerpen-Centraal"`, primary substring path preservation, and cutoff threshold enforcement.
-- Showcase documentation in `documentation/PHASE_6.md`.
-
-### Rewritten / Adjusted
-- Set similarity score threshold to 70.0 in rapidfuzz `WRatio` to prevent low-quality match noise while capturing common spelling typos.
-
-### Rejected
-- Replacing or modifying the primary substring search path — fuzzy matching is kept strictly as an additive fallback layer.
+### Log Entry: Phase 6 Implementation
+- **Prompt**: Implement Phase 6 (fuzzy search): substring matching stays primary path; fuzzy matching (rapidfuzz) only fills in when substring search returns zero stations. Add 'Antverpen' -> 'Antwerpen-Centraal' test case. Update TECH_STACK.md.
+- **Kept**: `rapidfuzz>=3.0.0` dependency, `fuzzy_search_stations_in_list` helper, updated `search_stations` fallback, unit and integration tests in `test_fuzzy_search.py`.
+- **Rewritten**: Set similarity score threshold to 70.0 in rapidfuzz `WRatio` to prevent low-quality match noise.
+- **Rejected**: Modifying or replacing the primary substring search path.
