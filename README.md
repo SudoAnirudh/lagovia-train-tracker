@@ -16,6 +16,7 @@ Built on top of the iRail API (Belgium).
 ## Documentation
 
 - [Phase 0 Documentation — Repo & Tooling Skeleton](documentation/PHASE_0.md)
+- [Phase 1 Documentation — iRail Client (Isolated & Tested)](documentation/PHASE_1.md)
 
 ---
 
@@ -63,5 +64,5 @@ make check
 ## Architecture & Design Trade-offs
 
 1. **CI-Lite vs. Hosted CI**: Local automated checking via `make check` is provided to ensure clean build, linting, and tests pass before committing.
-2. **In-Process Caching (Planned Phase 1)**: Station lists change infrequently, so in-process caching will be used to reduce unnecessary upstream iRail calls.
+2. **In-Process Caching (Phase 1)**: Station lists change infrequently, so in-process caching is used to avoid refetching iRail's full `/stations` endpoint on every query.
 3. **UTC Time Window Handling**: 15-minute window calculations are enforced server-side in UTC to prevent client-side timezone drift.
