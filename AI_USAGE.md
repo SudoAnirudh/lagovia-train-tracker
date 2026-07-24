@@ -62,3 +62,23 @@ This file tracks the usage of AI coding assistance during the implementation of 
 
 ### Rejected
 - Client-side or naive timezone handling in datetime parsing — all timestamps are parsed and formatted explicitly as UTC with trailing `'Z'`.
+
+---
+
+## Log Entry: 2026-07-24 - Phase 3 Implementation
+
+### Prompt / Intent
+"Implement Phase 3 of `IMPLEMENTATION_PLAN.md`: `GET /departures` endpoint in `main.py`, 3-char minimum validation (400 `query_too_short`), async concurrent fan-out via `asyncio.gather(..., return_exceptions=True)`, per-station error isolation, and integration tests with mocked iRail."
+
+### Kept
+- Endpoint `GET /departures?q=<query>` in `backend/app/main.py`.
+- Validation for `len(q) < 3` returning HTTP 400 with `{"error": "query_too_short", "message": "q must be at least 3 characters", "min_length": 3}`.
+- Concurrent fan-out via `asyncio.gather(*tasks, return_exceptions=True)` across matched stations.
+- Per-station error isolation mapping `IRailTimeoutError` to `status: "error"` (`error: "upstream_timeout"`) and other errors to `error: "upstream_error"` while letting remaining stations succeed (HTTP 200).
+- Integration test suite `backend/tests/test_departures_endpoint.py`.
+
+### Rewritten / Adjusted
+- Shared HTTP client management in `main.py` using FastAPI lifespan context manager with fallback inline client for test execution.
+
+### Rejected
+- Returning an empty 200 list on queries shorter than 3 characters — PRD §5 FR2 strictly mandates HTTP 400 `query_too_short`.
