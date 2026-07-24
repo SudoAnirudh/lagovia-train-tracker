@@ -22,3 +22,24 @@ This file tracks the usage of AI coding assistance during the implementation of 
 
 ### Rejected
 - Full CI workflow setup (GitHub Actions) for Phase 0 (rejected in favor of local `Makefile` / `make check` per PRD and implementation plan scope).
+
+---
+
+## Log Entry: 2026-07-24 - Phase 1 Implementation
+
+### Prompt / Intent
+"Implement Phase 1 of `IMPLEMENTATION_PLAN.md`: create pure `irail_client.py` module for iRail API fetch and parse, zero FastAPI dependencies, typed custom exceptions, in-process station caching, and unit tests using `respx` mock fixtures."
+
+### Kept
+- `backend/app/irail_client.py` with zero FastAPI imports.
+- Typed dataclasses `Station` and `RawDeparture`.
+- Typed custom exception hierarchy (`IRailError`, `IRailTimeoutError`, `IRailAPIError`, `IRailParseError`).
+- In-process stations list caching (`fetch_stations`, `search_stations`, `clear_stations_cache`).
+- Fixtures `stations.json`, `liveboard_brussels.json`, and `liveboard_empty.json` in `backend/tests/fixtures/`.
+- 8 unit tests in `backend/tests/test_irail_client.py`.
+
+### Rewritten / Adjusted
+- Vehicle shortname parsing logic to fallback gracefully to stripping `BE.NMBS.` prefix if `vehicleinfo.shortname` is absent in raw liveboard item.
+
+### Rejected
+- Adding an external cache library (e.g. Redis/diskcache) — in-process list caching is simple, dependency-free, and sufficient.

@@ -1,0 +1,30 @@
+{
+  "version": "1.1",
+  "timestamp": "1721818800",
+  "station": [
+    {
+      "id": "BE.NMBS.008812005",
+      "@id": "http://irail.be/stations/NMBS/008812005",
+      "name": "Brussels-Central",
+      "locationX": "4.357056",
+      "locationY": "50.845466",
+      "standardname": "Brussels-Central"
+    },
+    {
+      "id": "BE.NMBS.008891009",
+      "@id": "http://irail.be/stations/NMBS/008891009",
+      "name": "Bruges",
+      "locationX": "3.2167",
+      "locationY": "51.1972",
+      "standardname": "Bruges"
+    },
+    {
+      "id": "BE.NMBS.008892007",
+      "@id": "http://irail.be/stations/NMBS/008892007",
+      "name": "Gent-Sint-Pieters",
+      "locationX": "3.7106",
+      "locationY": "51.0358",
+      "standardname": "Gent-Sint-Pieters"
+    }
+  ]
+}
