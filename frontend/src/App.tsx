@@ -37,7 +37,10 @@ export default function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <div className="header-badge">Lagovia Transit Network</div>
+        <div className="header-badge">
+          <span className="live-pulse"></span>
+          Belgian Transit Network
+        </div>
         <h1 className="app-title">Train Departure Tracker</h1>
         <p className="app-subtitle">
           Real-time Belgian train departures in the next 15-minute window.
