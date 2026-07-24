@@ -43,3 +43,22 @@ This file tracks the usage of AI coding assistance during the implementation of 
 
 ### Rejected
 - Adding an external cache library (e.g. Redis/diskcache) — in-process list caching is simple, dependency-free, and sufficient.
+
+---
+
+## Log Entry: 2026-07-24 - Phase 2 Implementation
+
+### Prompt / Intent
+"Implement Phase 2 of `IMPLEMENTATION_PLAN.md`: pure domain logic in `domain.py`, zero FastAPI dependencies, UTC ISO 8601 formatting, strict 15-minute window boundary filtering, response contract shaping matching PRD §7, and comprehensive boundary unit tests."
+
+### Kept
+- Pure module `backend/app/domain.py` with zero FastAPI imports.
+- Dataclasses `Departure`, `StationResult`, `DeparturesResponse`.
+- Functions `format_iso8601_utc`, `filter_window`, `to_departure`, `to_station_result_ok`, `to_station_result_error`, `build_response_dict`.
+- Strict boundary unit tests in `backend/tests/test_domain.py` testing exact boundaries: `now - 1s` (excluded), `now` (included), `now + 15m` (included), `now + 15m + 1s` (excluded).
+
+### Rewritten / Adjusted
+- Delay calculation converted delay in seconds to non-negative integer minutes using floor division `delay // 60` capped at 0 minimum.
+
+### Rejected
+- Client-side or naive timezone handling in datetime parsing — all timestamps are parsed and formatted explicitly as UTC with trailing `'Z'`.
