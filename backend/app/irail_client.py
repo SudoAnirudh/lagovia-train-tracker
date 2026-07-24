@@ -85,7 +85,7 @@ async def fetch_stations(
 
     url = f"{IRAIL_BASE_URL}/stations/?format=json&lang={lang}"
     try:
-        response = await client.get(url, timeout=timeout)
+        response = await client.get(url, timeout=timeout, follow_redirects=True)
     except httpx.TimeoutException as exc:
         logger.error("Timeout fetching station list from iRail: %s", exc)
         raise IRailTimeoutError("Upstream timeout fetching station list") from exc
@@ -151,7 +151,7 @@ async def get_liveboard(
     """Fetch liveboard departures for a given station ID or name."""
     url = f"{IRAIL_BASE_URL}/liveboard/?id={station_id_or_name}&format=json&lang={lang}"
     try:
-        response = await client.get(url, timeout=timeout)
+        response = await client.get(url, timeout=timeout, follow_redirects=True)
     except httpx.TimeoutException as exc:
         logger.error("Timeout fetching liveboard for station %s: %s", station_id_or_name, exc)
         raise IRailTimeoutError(f"Upstream timeout for station {station_id_or_name}") from exc

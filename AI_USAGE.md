@@ -103,3 +103,22 @@ This file tracks the usage of AI coding assistance during the implementation of 
 
 ### Rejected
 - WebSocket or interval polling for live updates — out of scope per PRD §4.
+
+---
+
+## Log Entry: 2026-07-24 - Phase 5 Implementation
+
+### Prompt / Intent
+"Implement Phase 5 of `IMPLEMENTATION_PLAN.md`: polish & hardening, finalize README.md with run instructions and trade-offs, update AI_USAGE.md across all phases, execute live iRail API smoke tests, and line-by-line PRD review."
+
+### Kept
+- Finalized root `README.md` and component `README.md` files.
+- Executed live iRail API integration smoke tests against real Belgian station data (714 stations returned, live departures verified for Brugge).
+- Configured `follow_redirects=True` in `irail_client.py` and `main.py` to seamlessly follow iRail HTTP 303 redirects.
+- Complete documentation showcase `documentation/PHASE_5.md`.
+
+### Rewritten / Adjusted
+- Added `follow_redirects=True` on `httpx.AsyncClient` calls after live smoke testing discovered iRail's use of HTTP 303 redirects on station endpoints.
+
+### Rejected
+- Starting Phase 6 (fuzzy search) before Phase 0-5 completion approval per explicit user constraint.

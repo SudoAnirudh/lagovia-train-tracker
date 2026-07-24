@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application-level HTTP client lifespan."""
-    app.state.http_client = httpx.AsyncClient(timeout=5.0)
+    app.state.http_client = httpx.AsyncClient(timeout=5.0, follow_redirects=True)
     yield
     await app.state.http_client.aclose()
 
@@ -72,7 +72,7 @@ async def get_departures(q: Optional[str] = Query(None, description="Station sea
     client: httpx.AsyncClient = getattr(app.state, "http_client", None)
     should_close_client = False
     if client is None:
-        client = httpx.AsyncClient(timeout=5.0)
+        client = httpx.AsyncClient(timeout=5.0, follow_redirects=True)
         should_close_client = True
 
     try:
