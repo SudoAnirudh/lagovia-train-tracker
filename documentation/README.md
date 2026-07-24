@@ -14,6 +14,7 @@ Detailed showcase documentation covering each completed implementation phase of 
 | **Phase 3** | [PHASE_3.md](PHASE_3.md) | `GET /departures` endpoint, 3-char min query 400 validation, concurrent fan-out, error isolation | Completed |
 | **Phase 4** | [PHASE_4.md](PHASE_4.md) | React 18 + TS UI, instant 3-char validation, loading/empty/error states, status badges | Completed |
 | **Phase 5** | [PHASE_5.md](PHASE_5.md) | Polish & hardening, live iRail API smoke tests, 303 redirect support, full PRD compliance audit | Completed |
+| **Phase 6** | [PHASE_6.md](PHASE_6.md) | Additive fuzzy search fallback (`rapidfuzz`), typo resolution (`"Antverpen"` → `"Antwerpen-Centraal"`) | Completed |
 
 ---
 

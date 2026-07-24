@@ -122,3 +122,24 @@ This file tracks the usage of AI coding assistance during the implementation of 
 
 ### Rejected
 - Starting Phase 6 (fuzzy search) before Phase 0-5 completion approval per explicit user constraint.
+
+---
+
+## Log Entry: 2026-07-24 - Phase 6 Implementation
+
+### Prompt / Intent
+"Implement Phase 6 (fuzzy search) from IMPLEMENTATION_PLAN.md: substring matching stays primary path; fuzzy matching (rapidfuzz) only fills in when substring search returns zero stations. Add 'Antverpen' -> 'Antwerpen-Centraal' as a test case. Update TECH_STACK.md with dependency justification per RULES.md rule 6."
+
+### Kept
+- Added `rapidfuzz>=3.0.0` to `backend/requirements.txt`.
+- Documented dependency justification in `docs/TECH_STACK.md`.
+- Implemented `fuzzy_search_stations_in_list` in `backend/app/irail_client.py`.
+- Updated `search_stations` to fall back to `fuzzy_search_stations_in_list` only when substring matches = 0.
+- Unit and integration tests in `backend/tests/test_fuzzy_search.py` verifying `"Antverpen"` typo resolution to `"Antwerpen-Centraal"`, primary substring path preservation, and cutoff threshold enforcement.
+- Showcase documentation in `documentation/PHASE_6.md`.
+
+### Rewritten / Adjusted
+- Set similarity score threshold to 70.0 in rapidfuzz `WRatio` to prevent low-quality match noise while capturing common spelling typos.
+
+### Rejected
+- Replacing or modifying the primary substring search path — fuzzy matching is kept strictly as an additive fallback layer.

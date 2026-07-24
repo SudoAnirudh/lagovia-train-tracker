@@ -131,15 +131,73 @@ def search_stations_in_list(stations: List[Station], query: str) -> List[Station
     ]
 
 
+def fuzzy_search_stations_in_list(
+    stations: List[Station],
+    query: str,
+    score_cutoff: float = 70.0,
+    limit: int = 5,
+) -> List[Station]:
+    """Additive fuzzy fallback search using rapidfuzz.
+
+    Only invoked when primary substring matching returns zero results.
+    Matches query against station.name and station.standard_name.
+    """
+    try:
+        from rapidfuzz import fuzz, process
+    except ImportError:
+        logger.warning("rapidfuzz library not available for fuzzy search")
+        return []
+
+    query_lower = query.strip().lower()
+    if not query_lower:
+        return []
+
+    station_map = {}
+    for s in stations:
+        station_map[s.name.lower()] = s
+        station_map[s.standard_name.lower()] = s
+
+    names = list(station_map.keys())
+    matches = process.extract(
+        query_lower,
+        names,
+        scorer=fuzz.WRatio,
+        score_cutoff=score_cutoff,
+        limit=limit,
+    )
+
+    matched_stations = []
+    seen_ids = set()
+    for matched_name, _score, _index in matches:
+        st = station_map[matched_name]
+        if st.id not in seen_ids:
+            seen_ids.add(st.id)
+            matched_stations.append(st)
+
+    return matched_stations
+
+
 async def search_stations(
     client: httpx.AsyncClient,
     query: str,
     lang: str = "en",
     timeout: float = DEFAULT_TIMEOUT,
+    enable_fuzzy: bool = True,
 ) -> List[Station]:
-    """Search for stations matching query substring."""
+    """Search for stations matching query.
+
+    Primary path: case-insensitive substring match.
+    Additive fallback: fuzzy search (rapidfuzz) if substring search yields 0 matches.
+    """
     stations = await fetch_stations(client, lang=lang, timeout=timeout)
-    return search_stations_in_list(stations, query)
+    substring_matches = search_stations_in_list(stations, query)
+    if substring_matches:
+        return substring_matches
+
+    if enable_fuzzy:
+        return fuzzy_search_stations_in_list(stations, query)
+
+    return []
 
 
 async def get_liveboard(
