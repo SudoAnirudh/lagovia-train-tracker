@@ -13,6 +13,12 @@ Built on top of the iRail API (Belgium).
 
 ---
 
+## Documentation
+
+- [Phase 0 Documentation — Repo & Tooling Skeleton](documentation/PHASE_0.md)
+
+---
+
 ## Quickstart
 
 ### 1. Backend Setup
